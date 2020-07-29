@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 #
@@ -74,7 +74,7 @@ class lrsgen(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
-        self.digital_additive_scrambler_bb_0 = digital.additive_scrambler_bb(0xb, 0x7f, 7, count=0, bits_per_byte=8, reset_tag_key="")
+        self.digital_additive_scrambler_bb_0 = digital.additive_scrambler_bb(0x5, 0x3, 3, count=0, bits_per_byte=8, reset_tag_key="")
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
         self.blocks_null_source_0 = blocks.null_source(gr.sizeof_char*1)
         self.blocks_head_0 = blocks.head(gr.sizeof_char*1, 1024)
