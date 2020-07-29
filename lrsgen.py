@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #
@@ -69,15 +69,15 @@ class lrsgen(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 4000
+        self.num_bytes = num_bytes = 4096
 
         ##################################################
         # Blocks
         ##################################################
-        self.digital_additive_scrambler_bb_0 = digital.additive_scrambler_bb(0x5, 0x3, 3, count=0, bits_per_byte=8, reset_tag_key="")
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
+        self.digital_additive_scrambler_bb_0 = digital.additive_scrambler_bb(0x3, 0x7f, 6, count=0, bits_per_byte=1, reset_tag_key="")
+        self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
         self.blocks_null_source_0 = blocks.null_source(gr.sizeof_char*1)
-        self.blocks_head_0 = blocks.head(gr.sizeof_char*1, 1024)
+        self.blocks_head_0 = blocks.head(gr.sizeof_char*1, num_bytes)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, 'lrsout', False)
         self.blocks_file_sink_0.set_unbuffered(False)
 
@@ -88,8 +88,8 @@ class lrsgen(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.blocks_head_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.blocks_null_source_0, 0), (self.digital_additive_scrambler_bb_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_head_0, 0))
-        self.connect((self.digital_additive_scrambler_bb_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_head_0, 0))
+        self.connect((self.digital_additive_scrambler_bb_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
 
 
     def closeEvent(self, event):
@@ -97,12 +97,12 @@ class lrsgen(gr.top_block, Qt.QWidget):
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
-    def get_samp_rate(self):
-        return self.samp_rate
+    def get_num_bytes(self):
+        return self.num_bytes
 
-    def set_samp_rate(self, samp_rate):
-        self.samp_rate = samp_rate
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+    def set_num_bytes(self, num_bytes):
+        self.num_bytes = num_bytes
+        self.blocks_head_0.set_length(self.num_bytes)
 
 
 
